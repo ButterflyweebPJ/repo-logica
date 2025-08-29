@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Cenário DS - Sala e Robot</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+  </head>
+  <body>
+     <a-scene video-handler>
+      <!-- Fundo 360º com a imagem da sala -->
+      <a-sky src="Cénario cama/Quarto vr.jpg" rotation="0 -90 0"></a-sky>
+
+        <!-- Câmera com cursor para interação VR -->
+        <a-camera look-controls>
+            <a-cursor fuse="true" fuse-timeout="1500" color="white"></a-cursor>
+          </a-camera>
+    
+          <html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <title>HUD de Posições (vírgula decimal)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root { --hud-bg: rgba(0,0,0,0.55); --hud-color: #7CFC00; }
+    html,body { height:100%; margin:0; }
+    body {
+      background: url("https://picsum.photos/1920/1080") no-repeat center center fixed;
+      background-size: cover;
+      font-family: "Segoe UI", Roboto, Arial, monospace;
+      -webkit-font-smoothing:antialiased;
+      color:var(--hud-color);
+    }
+
+    #hud {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 9999;
+      background: var(--hud-bg);
+      color: var(--hud-color);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      min-width: 150px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+    }
+
+    #hud small { display:block; opacity:0.8; font-size:12px; margin-top:6px; color: #cfefcf; }
+    .line { display:flex; gap:8px; align-items:center; }
+    .label { opacity:0.9; min-width:40px; }
+    .value { font-weight:700; font-family: monospace; }
+
+    /* versão sem caixa: só texto (opcional) */
+    .no-box #hud { background: transparent; box-shadow:none; }
+  </style>
+</head>
+<body>
+  <div id="hud" role="status" aria-live="polite">
+    <div class="line"><span class="label">X:</span><span id="xpx" class="value">0</span></div>
+    <div class="line"><span class="label">Y:</span><span id="ypx" class="value">0</span></div>
+    <div class="line"><span class="label">X%:</span><span id="xnorm" class="value">0,0</span></div>
+    <div class="line"><span class="label">Y%:</span><span id="ynorm" class="value">0,0</span></div>
+    <div class="line"><span class="label">Z:</span><span id="zval" class="value">0,0</span></div>
+    <small>Use ↑ / ↓ para Z (0,1). PageUp/PageDown ±1. Clique para alternar estilo.</small>
+  </div>
+
+  <script>
+    const xpxEl = document.getElementById('xpx');
+    const ypxEl = document.getElementById('ypx');
+    const xnormEl = document.getElementById('xnorm');
+    const ynormEl = document.getElementById('ynorm');
+    const zEl = document.getElementById('zval');
+    const hud = document.getElementById('hud');
+
+    let z = 0.0;
+
+    // formata número com vírgula e 1 casa decimal
+    function fmtDecimal1(n) {
+      // garantimos uma casa decimal
+      const s = Number(n).toFixed(1);
+      return s.replace('.', ',');
+    }
+
+    // formata inteiro (px)
+    function fmtInt(n) {
+      return Math.round(n).toString();
+    }
+
+    // Atualiza HUD com dados do mouse
+    function updateFromMouse(e) {
+      const x = e.clientX;
+      const y = e.clientY;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      xpxEl.textContent = fmtInt(x);
+      ypxEl.textContent = fmtInt(y);
+
+      // normaliza para 0.0 - 100.0 e mostra com 1 casa e vírgula
+      const xPerc = (x / Math.max(w,1)) * 100;
+      const yPerc = (y / Math.max(h,1)) * 100;
+      xnormEl.textContent = fmtDecimal1(xPerc);
+      ynormEl.textContent = fmtDecimal1(yPerc);
+
+      // Z com vírgula
+      zEl.textContent = fmtDecimal1(z);
+    }
+
+    // captura movimento contínuo
+    document.addEventListener('mousemove', updateFromMouse, { passive: true });
+
+    // teclado para ajustar Z
+    document.addEventListener('keydown', (ev) => {
+      // evitar interferir com inputs (se tiver)
+      const tag = document.activeElement?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+      if (ev.key === 'ArrowUp') {
+        z = +(z + 0.1).toFixed(2);
+        ev.preventDefault();
+      } else if (ev.key === 'ArrowDown') {
+        z = +(z - 0.1).toFixed(2);
+        ev.preventDefault();
+      } else if (ev.key === 'PageUp') {
+        z = +(z + 1).toFixed(2);
+      } else if (ev.key === 'PageDown') {
+        z = +(z - 1).toFixed(2);
+      }
+      // atualiza Z no HUD
+      zEl.textContent = fmtDecimal1(z);
+    });
+
+    // clique no HUD alterna entre caixa e só texto (só para style rápido)
+    hud.addEventListener('click', () => {
+      document.body.classList.toggle('no-box');
+    });
+
+    // inicializa (posição central)
+    updateFromMouse({ clientX: window.innerWidth/2, clientY: window.innerHeight/2 });
+  </script>
+</body>
+</html>
+    
+<a-image class="clickable" data-video="#video-robo2" src="Personagens/Gato ruivinho.png"
+         position="0.7 0.4 -3.5" width="1" height="1.50" look-at="#camera"></a-image>
+<a-video id="video-robo2" src="#src-robo2" position="0.7 0.4 -3.5" width="1" height="1" visible="false"></a-video>
+<a-circle position="0.7 0.4 -3.5" radius="0.2" color="#FFD700" class="clickable" data-video="#video-robo2"
+          animation="property: material.opacity; from: 1; to: 0.1; dur: 1000; dir: alternate; loop: true"></a-circle>
+<video id="src-robo2" crossorigin="anonymous" loop><source src="" type="video/mp4"></video>
+
+<a-image class="clickable" data-video="#video-robo3" src="Personagens/cat-isolated-white-background.png"
+         position="3.5 -1.0 -2.7" rotation="-1 -60 0" width="2.7" height="3.4" look-at="#camera"></a-image>
+
+         <a-image class="clickable" data-video="#video-robo6" src="Personagens/Gato preto e branco.png"
+         position="-6,3 -0.7 6.0" rotation="10 160 0" width="3.5" height="3.0" look-at="#camera"></a-image>
+         <!--Onde o audio se localiza-->
+         <a-sound src="#audio" autoplay="true" position="1.2 2.0 -3"></a-sound>
+
+         <audio id="audio" crossorigin="anonymous">
+           <source src="Audio video/Arquitetura_ Arte e Ciência-VEED - Converted with FlexClip.mp3" type="audio/mp3">
+         </audio>
+
+ <!-- Narração com voz do Robô principal -->
+ <a-sound src="#audio" autoplay="true" position="1.2 2.0 -5"></a-sound>
+
+<!--Para rodar  o video-->
+ <video id="src-proc" crossorigin="anonymous" preload="auto" playsinline webkit-playsinline loop>
+  <source src="Videos/Arquitetura_ Arte e Ciência-VEED.mp4" type="video/mp4">
+</video>
+
+
+ <!-- Câmera com cursor para interação VR -->
+ <a-camera look-controls>
+   <a-cursor fuse="true" fuse-timeout="1500" color="white"></a-cursor>
+ </a-camera>
+
+<!-- Script dinâmico para todos os robôs -->
+ <script>
+AFRAME.registerComponent('video-handler', {
+init: function () {
+ const sceneEl = this.el;
+ const robos = sceneEl.querySelectorAll('.clickable');
+ let activeVideo = null;
+ let gazeTimer = null;
+
+ robos.forEach(robo => {
+   const videoSelector = robo.getAttribute('data-video');
+   const videoEl = sceneEl.querySelector(videoSelector);
+
+   if (!videoEl) return;
+
+   
+
+   // Olhar fixo por 2 segundos
+   robo.addEventListener('mouseenter', () => {
+     gazeTimer = setTimeout(() => {
+       showVideo(videoEl);
+     }, 2000); // 2 segundos
+   });
+
+   robo.addEventListener('mouseleave', () => {
+     clearTimeout(gazeTimer);
+   });
+
+   // Clique com mouse (para testes)
+   robo.addEventListener('click', () => {
+     showVideo(videoEl);
+   });
+ });
+
+ // Clique fora = fecha vídeo ativo
+ sceneEl.addEventListener('click', function () {
+   if (activeVideo) {
+     activeVideo.setAttribute('visible', 'false');
+     const domVideo = document.querySelector(activeVideo.getAttribute('src'));
+     if (domVideo && domVideo.pause) domVideo.pause();
+     activeVideo = null;
+   }
+ });
+
+ function showVideo(videoEl) {
+   if (activeVideo && activeVideo !== videoEl) {
+     activeVideo.setAttribute('visible', 'false');
+     const domPrevious = document.querySelector(activeVideo.getAttribute('src'));
+     if (domPrevious && domPrevious.pause) domPrevious.pause();
+   }
+
+   const domCurrent = document.querySelector(videoEl.getAttribute('src'));
+   if (domCurrent && domCurrent.play) domCurrent.play();
+
+   videoEl.setAttribute('visible', 'true');
+   activeVideo = videoEl;
+ }
+}
+});
+</script>
+
+
+</a-scene>
+</body>
+</html>
+
+        
